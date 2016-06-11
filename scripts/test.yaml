@@ -1,0 +1,56 @@
+!!python/object:PseudoMaterial.PseudoMaterial
+atom_sites:
+- chemical-id: A_2
+  x-pos: 0.2673
+  y-pos: 0.767
+  z-pos: 0.7757
+- chemical-id: A_3
+  x-pos: 0.7619
+  y-pos: 0.1131
+  z-pos: 0.9052
+atom_types:
+- chemical-id: A_0
+  epsilon: 212.9607
+  sigma: 4.1257
+- chemical-id: A_1
+  epsilon: 79.8135
+  sigma: 6.2974
+- chemical-id: A_2
+  epsilon: 400.307
+  sigma: 2.3845
+- chemical-id: A_3
+  epsilon: 72.5781
+  sigma: 5.272
+lattice_constants:
+  a: 14.3193
+  b: 20.3232
+  c: 18.0336
+name: parent
+!!python/object:PseudoMaterial.PseudoMaterial
+atom_sites:
+- chemical-id: A_2
+  x-pos: 2.8646
+  y-pos: 2.7534
+  z-pos: 3.8576
+- chemical-id: A_3
+  x-pos: 5.1479
+  y-pos: 3.9925
+  z-pos: 4.0513
+atom_types:
+- chemical-id: A_0
+  epsilon: 197.2223
+  sigma: 4.0849
+- chemical-id: A_1
+  epsilon: 108.874
+  sigma: 6.1798
+- chemical-id: A_2
+  epsilon: 379.9543
+  sigma: 2.4638
+- chemical-id: A_3
+  epsilon: 82.0689
+  sigma: 5.3495
+lattice_constants:
+  a: 15.3043
+  b: 22.7524
+  c: 17.9951
+name: child
