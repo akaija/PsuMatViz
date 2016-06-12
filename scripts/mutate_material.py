@@ -47,10 +47,10 @@ def mutate_material(material, mutation_strength, name):
     }
     new_material.lattice_constants = lattice_constants
 
-    old_number_density = len(material.atom_sites) / prod([old_lattice_constants[i]
-        for i in old_lattice_constants])
-    number_density = perturb(old_number_density, number_density_limits, mutation_strength)
-    number_of_atoms = int(number_density * prod([lattice_constants[i] for i in lattice_constants]))
+#    old_number_density = len(material.atom_sites) / prod([old_lattice_constants[i]
+#        for i in old_lattice_constants])
+#    number_density = perturb(old_number_density, number_density_limits, mutation_strength)
+#    number_of_atoms = int(number_density * prod([lattice_constants[i] for i in lattice_constants]))
 
     ###########################################################################
     # populate unit cell with atom-sites
