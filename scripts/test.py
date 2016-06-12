@@ -11,11 +11,13 @@ number_of_atom_types = 4
 mutation_strength = 0.1
 segments = 5
 
-output_dir = os.path.join(os.environ['PWD'], 'output')
+output_dir = os.path.join(os.getcwd(), 'output')
 if not os.path.isdir(output_dir):
     os.mkdir(output_dir)
-output_path = os.path.join(output_dir, datetime.now().isoformat())
+output_path = os.path.join(output_dir, datetime.now().strftime('%H%M%A%d%B%y'))
 os.mkdir(output_path)
+
+print('Creating materials in:\n%s\n' % output_path)
 
 parent = create_material(number_of_atom_types, 'parent')
 child = mutate_material(parent, mutation_strength, 'child')
@@ -38,6 +40,7 @@ def write_to_file(file_path, pseudo_material):
         yaml.dump(pseudo_material, file, default_flow_style=False)
 
 def transition(parent, child, segments):
+    print('...')
     similarity = [i / segments for i in range(1, segments - 1)]
 
     counter = 0
@@ -76,6 +79,10 @@ def transition(parent, child, segments):
         counter += 1
 
             
+print('...')
 write_to_file(os.path.join(output_path, 'parent.yaml'), parent)
+print('...')
 write_to_file(os.path.join(output_path, 'child.yaml'), child)
 transition(parent, child, segments)
+
+print('...done!')
