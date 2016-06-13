@@ -59,9 +59,20 @@ def create_unit_cell(x, y, z, name):
     black = MakeMaterial('black', (0, 0, 0), (1, 1, 1), 1)
     SetMaterial(bpy.context.object, black)
 
-def apply_cut_off(name):
+def get_tag(atom_count):
+    tag_number = str(atom_count)
+    if len(tag_number) < 3:
+        dif = 3 - len(tag_number)
+        for i in range(dif):
+            tag_number = '0' + tag_number
+    return tag_number
+
+def apply_cut_off(name, tag):
     unit_cell = bpy.data.objects[name + '_unit_cell']
-    sphere    = bpy.data.objects['Sphere']
+    if tag == None:
+        sphere = bpy.data.objects['Sphere']
+    else:
+        sphere = bpy.data.objects['Sphere.' + tag]
 
 #    for obj in scene.objects:
 #        if obj.type == 'MESH' and obj.name.startswith('Sphere'):
@@ -78,35 +89,43 @@ def apply_cut_off(name):
     except:
        pass
 
-def make_periodic(x, y, z, a, b, c, radius, material, name):
-    if x <= 2 * radius:
-            add_sphere(location=(x + a, y, z), size=radius)
-            SetMaterial(bpy.context.object, material)
-            bpy.ops.object.shade_smooth()
+def make_periodic(x, y, z, a, b, c, radius, material, name, atom_count):
+    tag = get_tag(atom_count)
+    if x <=  radius:
+        add_sphere(location=(x + a, y, z), size=radius)
+        SetMaterial(bpy.context.scene.objects['Sphere.' + tag], material)
+        apply_cut_off(name, tag)
+        atom_count += 1
     if x + radius >= a:
-            add_sphere(location=(x - a, y, z), size=radius)
-            SetMaterial(bpy.context.object, material)
-            bpy.ops.object.shade_smooth()
-    if y <= 2 * radius:
-            add_sphere(location=(x, y + b, z), size=radius)
-            SetMaterial(bpy.context.object, material)
-            bpy.ops.object.shade_smooth()
+        add_sphere(location=(x - a, y, z), size=radius)
+        SetMaterial(bpy.context.scene.objects['Sphere.' + tag], material)
+        apply_cut_off(name, tag)
+        atom_count += 1
+    if y <= radius:
+        add_sphere(location=(x, y + b, z), size=radius)
+        SetMaterial(bpy.context.scene.objects['Sphere.' + tag], material)
+        apply_cut_off(name, tag)
+        atom_count += 1
     if y + radius >= b:
-            add_sphere(location=(x, y - b, z), size=radius)
-            SetMaterial(bpy.context.object, material)
-            bpy.ops.object.shade_smooth()
-    if z <= 2 * radius:
-            add_sphere(location=(x, y, z + c), size=radius)
-            SetMaterial(bpy.context.object, material)
-            bpy.ops.object.shade_smooth()
+        add_sphere(location=(x, y - b, z), size=radius)
+        SetMaterial(bpy.context.scene.objects['Sphere.' + tag], material)
+        apply_cut_off(name, tag)
+        atom_count += 1
+    if z <= radius:
+        add_sphere(location=(x, y, z + c), size=radius)
+        SetMaterial(bpy.context.scene.objects['Sphere.' + tag], material)
+        apply_cut_off(name, tag)
+        atom_count += 1
     if z + radius >= c:
-            add_sphere(location=(x, y, z - c), size=radius)
-            SetMaterial(bpy.context.object, material)
-            bpy.ops.object.shade_smooth()
-    apply_cut_off(name)
-    bpy.data.objects['Sphere'].select = True
-    bpy.data.objects[name].select = True
-    bpy.ops.object.join()
+        add_sphere(location=(x, y, z - c), size=radius)
+        SetMaterial(bpy.context.scene.objects['Sphere.' + tag], material)
+        apply_cut_off(name, tag)
+#        bpy.data.objects['Sphere'].select = True
+#        bpy.data.objects[name].select = True
+#        bpy.ops.object.join()
+        atom_count += 1
+    bpy.ops.object.shade_smooth()
+    return atom_count
 
 def add_pseudo_material(material_file):
     with open(material_file) as source:	
@@ -135,7 +154,7 @@ def add_pseudo_material(material_file):
             )
             radii.append(atom_type['sigma'])
 
-        first_atom = True
+        atom_count = 0
         for atom_site in atom_sites: 
             index = int(atom_type['chemical-id'][2:])
             radius = radii[index]
@@ -144,18 +163,31 @@ def add_pseudo_material(material_file):
             y = b * atom_site['y-pos']
             z = c * atom_site['z-pos']
             add_sphere(location = (x, y, z), size = radius)
+            if atom_count == 0:
+                SetMaterial(bpy.context.scene.objects['Sphere'], material)
+                apply_cut_off(name, None)
+            if atom_count > 0:
+                tag = get_tag(atom_count)
+                SetMaterial(bpy.context.scene.objects['Sphere.' + tag], material)
+                apply_cut_off(name, tag)
             bpy.ops.object.shade_smooth()
-            apply_cut_off(name)
-#            if first_atom:
+            atom_count += 1
+#            if first_atom == 0:
 #                for obj in bpy.context.scene.objects:
 #                    if obj.type == 'MESH' and obj.name.lower().startswith('s'):
 #                        obj.name = name
-#                first_atom = False
+#                first_atom += 1
 #            else:
+#                bpy.context.scene.objects.active = bpy.data.objects['Sphere']
 #                bpy.data.objects['Sphere'].select = True
+#                bpy.context.scene.objects.active = bpy.data.objects[name]
 #                bpy.data.objects[name].select = True
 #                bpy.ops.object.join()
-            make_periodic(x, y, z, a, b, c, radius, material, name)
+            atom_count = make_periodic(x, y, z, a, b, c, radius, material, name, atom_count)
+	    
+    bpy.data.objects[name + '_unit_cell'].select = True
+    bpy.context.scene.objects.active = bpy.data.objects[name + '_unit_cell']
+    bpy.ops.object.modifier_add(type='WIREFRAME')
 
 if __name__ == '__main__':
     add_pseudo_material(
