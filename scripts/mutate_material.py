@@ -1,5 +1,5 @@
 # standard library imports
-from random import choice, uniform
+from random import choice, uniform, random
 
 # related third party imports
 from numpy import prod
@@ -7,6 +7,30 @@ from numpy import prod
 # local application/library specific imports
 from PseudoMaterial import lattice_limits, number_density_limits, sigma_limits, epsilon_limits
 from PseudoMaterial import PseudoMaterial
+
+def closest_distance(x, y):
+    a = 1 - y + x
+    b = abs(y - x)
+    c = 1 - x + y
+    return min(a, b, c)
+
+def random_position(x_o, x_r, strength):
+    """Given two values, return some random point between them.
+    """
+    dx = closest_distance(x_o, x_r)
+    if (x_o > x_r
+            and (x_o - x_r) > 0.5):
+        xfrac = round((x_o + strength * dx) % 1., 4)
+    if (x_o < x_r
+            and (x_r - x_o) > 0.5):
+        xfrac = round((x_o - strength * dx) % 1., 4)
+    if (x_o >= x_r
+            and (x_o - x_r) < 0.5):
+        xfrac = round(x_o - strength * dx, 4)
+    if (x_o < x_r
+            and (x_r - x_o) < 0.5):
+        xfrac = round(x_o + strength * dx, 4)
+    return xfrac 
 
 def perturb(value, limits, mutation_strength):
     new_value = round(value + mutation_strength * (uniform(*limits) - value), 4)
@@ -58,9 +82,9 @@ def mutate_material(material, mutation_strength, name):
     for atom_site in old_atom_sites:
         new_atom_sites.append({
             'chemical-id'  : atom_site['chemical-id'],
-            'x-pos'        : perturb(atom_site['x-pos'], lattice_limits, mutation_strength),
-            'y-pos'        : perturb(atom_site['y-pos'], lattice_limits, mutation_strength),
-            'z-pos'        : perturb(atom_site['z-pos'], lattice_limits, mutation_strength)
+            'x-pos'        : random_position(atom_site['x-pos'], random(), mutation_strength),
+            'y-pos'        : random_position(atom_site['y-pos'], random(), mutation_strength),
+            'z-pos'        : random_position(atom_site['z-pos'], random(), mutation_strength)
         })
     new_material.atom_sites = new_atom_sites
 
