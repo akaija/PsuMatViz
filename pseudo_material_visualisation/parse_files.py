@@ -14,6 +14,8 @@ def parse_cif(uuid):
         if uuid in cif_file:
             cif_path = os.path.join(cif_dir, cif_file)
 
+    print('\n.cif-file:\n%s' % cif_path)
+
     # parsing atom-site locations and chemical-ids
     atom_sites = np.genfromtxt(
         cif_path,
@@ -28,6 +30,9 @@ def parse_cif(uuid):
         usecols = 1
     )
 
+    print('\nlattice constants:\n%s' % lattice_constants)
+    print('number of atom-sites:\t%s' % len(atom_sites))
+    
     return atom_sites, lattice_constants
 
 def parse_mix(uuid):
@@ -49,4 +54,6 @@ def parse_mix(uuid):
         dtype = None
     )
     
+    print('number of atom-types:\t%s' % len(lennard_jones))
+
     return lennard_jones
