@@ -95,10 +95,10 @@ def add_periodic_segments(atom_site, chemical_species, pseudo_material, site_cou
         )
     return site_count
 
-def visualise_pseudo_material(uuid):
+def visualise_pseudo_material(uuid, forcefield=None):
     print('\nvisualising:\t%s' % uuid)
 
-    pseudo_material = PseudoMaterial(uuid)
+    pseudo_material = PseudoMaterial(uuid, forcefield)
     print('\ncreating unit cell...')
     create_unit_cell(pseudo_material)    
     print('...done!')

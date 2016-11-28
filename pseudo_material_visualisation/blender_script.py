@@ -26,5 +26,9 @@ import imp
 imp.reload(visualise)
 
 if __name__ == "__main__":
-    visualise.visualise_pseudo_material(str(sys.argv[5]))
+    if len(sys.argv) > 6:
+        print('Using forcefield:\t%s' %  str(sys.argv[6]))
+        visualise.visualise_pseudo_material(str(sys.argv[5]), str(sys.argv[6]))
+    elif len(sys.argv) == 6:
+        visualise.visualise_pseudo_material(str(sys.argv[5]))
 
