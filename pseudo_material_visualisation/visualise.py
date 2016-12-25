@@ -115,8 +115,8 @@ def visualise_pseudo_material(uuid, forcefield=None):
             '%s_%s' % (species[0], pseudo_material.uuid),
                 (
                     1,
-                    species[1] / epsilon_limits[1],
-                    species[1] / epsilon_limits[1]
+                    1 - (0.3 + species[1] / epsilon_limits[1]),
+                    1 - (0.3 + species[1] / epsilon_limits[1])
                 ),
                 (1, 1, 1),
                 1
